@@ -1,0 +1,9 @@
+/* src/App.css */
+.App {
+  display: flex;
+}
+
+.content-area {
+  flex: 1;
+}
+

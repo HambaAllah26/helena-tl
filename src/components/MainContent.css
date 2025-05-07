@@ -1,0 +1,36 @@
+.main-content {
+  background-color: #274472; /* Slightly lighter blue than motto */
+  color: white;
+  padding: 40px 20px;
+}
+
+.content-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.content-title {
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  text-decoration: underline;
+}
+
+.content-body {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.content-img {
+  width: 450px;
+  height: auto;
+}
+
+.content-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
