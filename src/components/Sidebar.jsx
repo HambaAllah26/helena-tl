@@ -1,43 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
-import profilePic from '../assets/helena.png';
+import profilePic from '../assets/helena.png'; 
 
-function Sidebar() {
+const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
-  const [showVolumes, setShowVolumes] = useState(false);
-  const [showChapters, setShowChapters] = useState(false);
+  const [expandedItems, setExpandedItems] = useState({
+    volumes: false,
+    chapters: false
+  });
 
-  // Handle window resize
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        setIsOpen(true);
-      } else {
-        setIsOpen(false);
-      }
-    };
-
+    const handleResize = () => setIsOpen(window.innerWidth > 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const toggleVolumes = () => {
-    setShowVolumes(!showVolumes);
-  };
-
-  const toggleChapters = () => {
-    setShowChapters(!showChapters);
+  const toggleExpanded = (key) => {
+    setExpandedItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
   return (
     <>
       <button 
         className="sidebar-toggle" 
-        onClick={toggleSidebar}
+        onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
       >
         {isOpen ? '✕' : '☰'}
@@ -55,55 +44,50 @@ function Sidebar() {
         <nav>
           <ul>
             <li>
-              <button className="link-button" onClick={() => setIsOpen(false)}>
+              <button className="nav-button" onClick={() => setIsOpen(false)}>
                 Home
               </button>
             </li>
-            <li className="dropdown">
+            <li>
               <button 
-                onClick={toggleVolumes} 
-                className="link-button"
-                aria-expanded={showVolumes}
+                onClick={() => toggleExpanded('volumes')} 
+                className="nav-button dropdown-button"
               >
-                Ponkotsu Witch's Domestic Affair
+                <span>Ponkotsu Witch's Domestic Affair</span>
                 <span className="dropdown-arrow">
-                  {showVolumes ? ' ▼' : ' ▶'}
+                  {expandedItems.volumes ? '▼' : '▶'}
                 </span>
               </button>
-              {showVolumes && (
-                <ul className="volume-list">
-                  <li className="volume-item">
+
+              {expandedItems.volumes && (
+                <ul className="submenu">
+                  <li>
                     <button 
-                      className="volume-button"
-                      onClick={toggleChapters}
-                      aria-expanded={showChapters}
+                      className="nav-button dropdown-button"
+                      onClick={() => toggleExpanded('chapters')}
                     >
                       Volume 1
                       <span className="dropdown-arrow">
-                        {showChapters ? ' ▼' : ' ▶'}
+                        {expandedItems.chapters ? '▼' : '▶'}
                       </span>
                     </button>
-                    {showChapters && (
-                      <ul className="chapter-list">
-                        <li>
-                          <a href="/chapter1" onClick={() => setIsOpen(false)}>
-                            Chapter 1
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/chapter2" onClick={() => setIsOpen(false)}>
-                            Chapter 2
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/chapter3" onClick={() => setIsOpen(false)}>
-                            Chapter 3
-                          </a>
-                        </li>
+
+                    {expandedItems.chapters && (
+                      <ul className="submenu chapter-list">
+                        {[1, 2, 3].map((chapter) => (
+                          <li key={chapter}>
+                            <a 
+                              href={`/chapter${chapter}`}
+                              onClick={() => setIsOpen(false)}
+                              className="nav-link"
+                            >
+                              Chapter {chapter}
+                            </a>
+                          </li>
+                        ))}
                       </ul>
                     )}
                   </li>
-                  {/* Add more volumes here if needed */}
                 </ul>
               )}
             </li>
@@ -112,6 +96,6 @@ function Sidebar() {
       </aside>
     </>
   );
-}
+};
 
 export default Sidebar;

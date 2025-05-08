@@ -13,10 +13,6 @@
   transition: left 0.3s ease;
 }
 
-.sidebar.open + .sidebar-toggle {
-  left: 255px;
-}
-
 .sidebar {
   width: 240px;
   background-color: #1a1a1a;
@@ -33,6 +29,10 @@
 
 .sidebar.closed {
   transform: translateX(-100%);
+}
+
+.sidebar.open + .sidebar-toggle {
+  left: 255px;
 }
 
 .profile {
@@ -62,71 +62,52 @@ nav ul li {
   margin-bottom: 10px;
 }
 
-nav ul li a,
-nav ul li button {
-  color: white;
+.nav-button,
+.nav-link {
+  width: 100%;
+  text-align: left;
   background: none;
   border: none;
-  text-align: left;
-  cursor: pointer;
+  color: white;
   font-size: 16px;
-  width: 100%;
   padding: 8px 0;
-  text-decoration: none;
-  display: block;
-}
-
-nav ul li button:hover,
-nav ul li a:hover {
-  color: #ddd;
-}
-
-.volume-list {
-  list-style: none;
-  padding-left: 15px;
-  margin-top: 5px;
-}
-
-.volume-item {
-  margin-bottom: 5px;
-}
-
-.volume-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 16px;
-  text-align: left;
   cursor: pointer;
-  padding: 6px 0;
-  width: 100%;
+  display: block;
+  text-decoration: none;
+}
+
+.dropdown-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.volume-button:hover {
+.nav-button:hover,
+.nav-link:hover {
   color: #ddd;
 }
 
-.chapter-list {
+.submenu {
   list-style: none;
-  padding-left: 20px;
+  padding-left: 15px;
   margin-top: 5px;
 }
 
-.chapter-list li a {
+.chapter-list {
+  padding-left: 20px;
+}
+
+.chapter-list .nav-link {
   font-size: 15px;
-  display: block;
   padding: 5px 0;
   color: #ddd;
 }
 
-.chapter-list li a:hover {
+.chapter-list .nav-link:hover {
   color: white;
 }
 
 .dropdown-arrow {
-  margin-left: 5px;
   font-size: 0.8em;
+  margin-left: 5px;
 }

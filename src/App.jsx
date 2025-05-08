@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Motto from './components/Motto';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Header />
         <Motto />
         <MainContent />
+        <Footer />
       </div>
     </div>
   );

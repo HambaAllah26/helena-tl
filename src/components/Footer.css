@@ -1,0 +1,38 @@
+.footer {
+  background-color: #24416B; /* exact match */
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start; /* left-aligned text */
+  margin-left: 240px; /* Match sidebar width */
+  padding-left: 1rem; /* Optional: Add breathing room */
+  width: calc(100% - 240px); /* Prevent overflow */
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jp-text {
+  font-size: 0.9rem;
+  color: #b0b9c5;
+  margin-top: 0.2rem;
+}
+
+.footer-anchor {
+  width: 64px;
+  height: 64px;
+  opacity: 0.9;
+}
+

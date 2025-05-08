@@ -1,6 +1,6 @@
 import React from 'react';
 import './Header.css';
-import headerImg from '../assets/home_banner.jpg'; // Use your image path
+import headerImg from '../assets/home_banner.jpg';
 
 function Header() {
   return (
