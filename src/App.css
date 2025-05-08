@@ -1,9 +1,24 @@
-/* src/App.css */
-.App {
+.app-container {
   display: flex;
+  min-height: 100vh;
+  background-color: #274472;
 }
 
 .content-area {
-  flex: 1;
+  flex-grow: 1;
+  transition: width 0.3s ease;
 }
 
+.with-sidebar {
+  width: calc(100% - 240px);
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .with-sidebar, .full-width {
+    width: 100%;
+  }
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import './MainContent.css';
-import chibiImage from '../assets/helena_gilgamesh.png'; // Add this image to your assets
+import chibiImage from '../assets/helena_gilgamesh.png';
 
 function MainContent() {
   return (

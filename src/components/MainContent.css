@@ -1,12 +1,15 @@
 .main-content {
-  background-color: #274472; /* Slightly lighter blue than motto */
+  background-color: #274472;
   color: white;
   padding: 40px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .content-wrapper {
   max-width: 1000px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .content-title {
@@ -14,6 +17,8 @@
   font-weight: bold;
   font-size: 18px;
   text-decoration: underline;
+  display: block;
+  margin-bottom: 20px;
 }
 
 .content-body {
@@ -26,6 +31,7 @@
 .content-img {
   width: 450px;
   height: auto;
+  max-width: 100%;
 }
 
 .content-text {
@@ -34,3 +40,12 @@
   line-height: 1.6;
 }
 
+@media screen and (max-width: 768px) {
+  .content-body {
+    flex-direction: column;
+  }
+  
+  .content-img {
+    width: 100%;
+  }
+}
