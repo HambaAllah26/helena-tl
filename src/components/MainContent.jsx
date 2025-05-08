@@ -1,6 +1,7 @@
 import React from 'react';
 import './MainContent.css';
 import chibiImage from '../assets/helena_gilgamesh.png';
+import { Link } from 'react-router-dom';
 
 function MainContent() {
   const storyDetails = [
@@ -23,9 +24,9 @@ function MainContent() {
         <div className="content-body">
           <img src={chibiImage} alt="Chibi Helena" className="content-img" />
           <div className="content-text-wrapper">
-            <a href="#" className="content-title">
+            <Link to="/synopsis" className="content-title">
               I Become Oda Nobunaga's Wife: Diary of a Ponkotsu Witch's Domestic Affairs in the Warring States Period
-            </a>
+            </Link>
             <div className="content-text">
               {storyDetails.map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
