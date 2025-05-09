@@ -1,0 +1,18 @@
+{
+  "novelId": "meta-fairies",
+  "novelTitle": "Test Fairies",
+  "volumes": [
+    {
+      "number": 1,
+      "title": "CH1RN0",
+      "chapters": [
+        {
+          "number": 1,
+          "title": "KOKO DAYO",
+          "contentFile": "/content/meta-fairies/ch01.md",
+          "wordCount": 2100
+        }
+      ]
+    }
+  ]
+}

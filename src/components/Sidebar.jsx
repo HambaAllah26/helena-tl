@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Sidebar.css';
-import profilePic from '../assets/helena.png'; 
+import profilePic from '../assets/helena.png';
+
+function VolumeDropdown({ title, children, isInitiallyOpen = false }) {
+  const [isOpen, setIsOpen] = useState(isInitiallyOpen);
+
+  return (
+    <div className="sidebar-volume-dropdown">
+      <div className="sidebar-volume-header" onClick={() => setIsOpen(!isOpen)}>
+        {title}
+        <span className="sidebar-volume-arrow">{isOpen ? '▲' : '▼'}</span>
+      </div>
+      {isOpen && <div className="sidebar-volume-content">{children}</div>}
+    </div>
+  );
+}
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
-  const [expandedItems, setExpandedItems] = useState({
-    volumes: false,
-    chapters: false
-  });
+  const [novels, setNovels] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleResize = () => setIsOpen(window.innerWidth > 768);
@@ -15,12 +28,42 @@ const Sidebar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleExpanded = (key) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
+  useEffect(() => {
+    const loadNovels = async () => {
+      try {
+        const novelModules = await Promise.all(
+          Object.entries(import.meta.glob('../data/json/*.json')).map(
+            async ([path, module]) => {
+              const novel = (await module()).default;
+              return {
+                ...novel,
+                title: novel.novelTitle || novel.title,
+                volumes: novel.volumes.map(volume => ({
+                  ...volume,
+                  chapters: volume.chapters.map(chapter => ({
+                    ...chapter,
+                    chapterTitle: chapter.chapterTitle || chapter.title || `Chapter ${chapter.number}`
+                  }))
+                }))
+              };
+            }
+          )
+        );
+
+        setNovels(novelModules);
+      } catch (error) {
+        console.error('Error loading novel data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNovels();
+  }, []);
+
+  if (loading) {
+    return <div className="sidebar-loading">Loading novels...</div>;
+  }
 
   return (
     <>
@@ -44,53 +87,46 @@ const Sidebar = () => {
         <nav>
           <ul>
             <li>
-              <button className="nav-button" onClick={() => setIsOpen(false)}>
+              <Link to="/" className="nav-homebutton" onClick={() => setIsOpen(false)}>
                 Home
-              </button>
+              </Link>
             </li>
-            <li>
-              <button 
-                onClick={() => toggleExpanded('volumes')} 
-                className="nav-button dropdown-button"
-              >
-                <span>Ponkotsu Witch's Domestic Affair</span>
-                <span className="dropdown-arrow">
-                  {expandedItems.volumes ? '▼' : '▶'}
-                </span>
-              </button>
-
-              {expandedItems.volumes && (
-                <ul className="submenu">
-                  <li>
-                    <button 
-                      className="nav-button dropdown-button"
-                      onClick={() => toggleExpanded('chapters')}
-                    >
-                      Volume 1
-                      <span className="dropdown-arrow">
-                        {expandedItems.chapters ? '▼' : '▶'}
-                      </span>
-                    </button>
-
-                    {expandedItems.chapters && (
-                      <ul className="submenu chapter-list">
-                        {[1, 2, 3].map((chapter) => (
-                          <li key={chapter}>
-                            <a 
-                              href={`/chapter${chapter}`}
-                              onClick={() => setIsOpen(false)}
-                              className="nav-link"
-                            >
-                              Chapter {chapter}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                </ul>
-              )}
-            </li>
+            
+            {novels.map((novel) => (
+              <li key={novel.novelId}>
+                <VolumeDropdown 
+                  title={`${novel.title}`}
+                  isInitiallyOpen={true}
+                >
+                  <ul className="submenu">
+                    {novel.volumes.map((volume) => (
+                      <li key={`${novel.novelId}-vol${volume.number}`}>
+                        <VolumeDropdown 
+                          title={`Volume ${volume.number}: ${volume.title || ''}`}
+                        >
+                          <ul className="submenu chapter-list">
+                            {volume.chapters.map((chapter) => (
+                              <li key={`${novel.novelId}-ch${chapter.number}`}>
+                                <Link
+                                  to={`/novel/${novel.novelId}/chapter/${chapter.number}`}
+                                  onClick={() => setIsOpen(false)}
+                                  className="nav-link"
+                                >
+                                  <div className="chapter-title-full">
+                                    <span className="chapter-number">Ch. {chapter.number}:</span>
+                                    <span className="chapter-title-text"> {chapter.chapterTitle}</span>
+                                  </div>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </VolumeDropdown>
+                      </li>
+                    ))}
+                  </ul>
+                </VolumeDropdown>
+              </li>
+            ))}
           </ul>
         </nav>
       </aside>

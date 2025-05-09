@@ -5,7 +5,8 @@ import Motto from './components/Motto';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
-import SynopsisPage from './pages/Ponkotsu-syn';
+import PonkotsuSyn from './pages/Ponkotsu-syn';
+import Chapter from './pages/Chapter';
 import './App.css';
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
- return (
+  return (
     <Router>
       <div className="app-container">
         <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
@@ -29,11 +30,12 @@ function App() {
           <Header />
           <Motto />
           
-          {/* Main content container with consistent styling */}
           <div className="page-content-wrapper">
             <Routes>
               <Route path="/" element={<MainContent />} />
-              <Route path="/synopsis" element={<SynopsisPage />} />
+              <Route path="/PonkotsuSyn" element={<PonkotsuSyn />} />
+              <Route path="/novel/:novelId/chapter/:chapterNumber" element={<Chapter />} />
+              <Route path="/novel/:novelId" element={<PonkotsuSyn />} />
             </Routes>
           </div>
           

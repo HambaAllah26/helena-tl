@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import AnchorIcon from '../assets/anchor.png'; // your image path
+import AnchorIcon from '../assets/anchor.png';
 
 const Footer = () => {
   return (

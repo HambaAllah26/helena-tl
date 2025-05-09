@@ -1,1 +1,156 @@
+.synopsis-content {
+  background-color: #101827;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  color: white;
+}
 
+.synopsis-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 400px;
+  object-fit: cover;
+  border-bottom: 4px solid #1f2937;
+}
+
+.synopsis-wrapper {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.synopsis-body {
+  background-color: #1f2937;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.synopsis-title {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #93c5fd;
+  text-align: center;
+  margin-bottom: 20px;
+  text-decoration: none;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+/* Author style */
+.synopsis-author {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Japanese title style */
+.synopsis-jp-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.synopsis-title:hover {
+  text-decoration: underline;
+}
+
+
+.synopsis-text-wrapper {
+  color: #f9fafb;
+  line-height: 1.8;
+}
+
+.synopsis-text p {
+  margin-bottom: 1em;
+  font-size: 1rem;
+}
+
+.synopsis-text ul {
+  padding-left: 20px;
+  margin-bottom: 1em;
+}
+
+.synopsis-text li {
+  margin-bottom: 0.5em;
+  font-size: 1rem;
+}
+
+.synopsis-text strong {
+  color: #bfdbfe;
+}
+
+.volume-dropdown {
+  margin-top: 1.5rem;
+  border-top: 1px solid #374151;
+  padding-top: 1rem;
+}
+
+.volume-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f3f4f6;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #374151;
+  transition: background-color 0.3s ease;
+}
+
+.volume-header:hover {
+  background-color: #2c3a56;
+}
+
+.volume-arrow {
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.volume-content {
+  padding: 1rem 0;
+  color: #d1d5db;
+}
+
+.chapter-link {
+  padding: 1px 0;
+}
+
+.chapter-link:last-child {
+  border-bottom: none;
+}
+
+.chapter-link-text {
+  color: #93c5fd;
+  text-decoration: none;
+  display: block;
+  padding: 4px 8px;
+  transition: all 0.2s ease;
+}
+
+.chapter-link-text:hover {
+  color: #bfdbfe;
+  background-color: rgba(147, 197, 253, 0.1);
+  border-radius: 4px;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #93c5fd;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #fca5a5;
+}

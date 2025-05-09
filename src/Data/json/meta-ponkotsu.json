@@ -1,0 +1,30 @@
+{
+  "novelId": "meta-ponkotsu",
+  "novelTitle": "Ponkotsu Witch's Domestic Affairs",
+  "volumes": [
+    {
+      "number": 1,
+      "title": "A Fateful Encounter",
+      "chapters": [
+        {
+          "number": 1,
+          "title": "I Messed Up",
+          "contentFile": "/content/meta-ponkotsu/ch01.md",
+          "wordCount": 954
+        },
+        {
+          "number": 2,
+          "title": "To Sengoku Era",
+          "contentFile": "/content/meta-ponkotsu/ch02.md",
+          "wordCount": 987
+        },
+        {
+          "number": 3,
+          "title": "Saitō Dōsan",
+          "contentFile": "/content/meta-ponkotsu/ch03.md",
+          "wordCount": 1401
+        }
+      ]
+    }
+  ]
+}

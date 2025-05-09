@@ -24,7 +24,7 @@ function MainContent() {
         <div className="content-body">
           <img src={chibiImage} alt="Chibi Helena" className="content-img" />
           <div className="content-text-wrapper">
-            <Link to="/synopsis" className="content-title">
+            <Link to="/ponkotsuSyn" className="content-title">
               I Become Oda Nobunaga's Wife: Diary of a Ponkotsu Witch's Domestic Affairs in the Warring States Period
             </Link>
             <div className="content-text">
