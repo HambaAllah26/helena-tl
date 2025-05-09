@@ -1,5 +1,7 @@
 .synfooter {
   width: 100%;
+  height: 150px;
+  overflow: hidden;
   background-color: #24416B;
   display: flex;
   justify-content: center;
@@ -9,9 +11,7 @@
 }
 
 .synfooter-banner {
-  width: 20%;
-  max-width: 20%;
-  height: auto;
+  width: 60%;
   display: block;
 }
 

@@ -4,7 +4,14 @@ import headerImg from '../assets/home_banner.jpg';
 
 function Header() {
   return (
-    <header className="header" style={{ backgroundImage: `url(${headerImg})` }}>
+    <header className="header-container">
+      {/* Background image with opacity control */}
+      <div 
+        className="header-background" 
+        style={{ backgroundImage: `url(${headerImg})` }}
+      ></div>
+      
+      {/* Content (title) - unaffected by opacity */}
       <div className="header-overlay">
         <div className="header-title-box">
           <h1>HELENA TL</h1>
@@ -15,4 +22,3 @@ function Header() {
 }
 
 export default Header;
-
