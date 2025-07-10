@@ -31,28 +31,12 @@ const Sidebar = () => {
   useEffect(() => {
     const loadNovels = async () => {
       try {
-        const novelModules = await Promise.all(
-          Object.entries(import.meta.glob('../data/json/*.json')).map(
-            async ([path, module]) => {
-              const novel = (await module()).default;
-              return {
-                ...novel,
-                title: novel.novelTitle || novel.title,
-                volumes: novel.volumes.map(volume => ({
-                  ...volume,
-                  chapters: volume.chapters.map(chapter => ({
-                    ...chapter,
-                    chapterTitle: chapter.chapterTitle || chapter.title || `Chapter ${chapter.number}`
-                  }))
-                }))
-              };
-            }
-          )
-        );
-
-        setNovels(novelModules);
+        const res = await fetch('https://your-backend.com/api/sidebar.php');
+        if (!res.ok) throw new Error('Failed to load sidebar data');
+        const data = await res.json();
+        setNovels(data.novels || []);
       } catch (error) {
-        console.error('Error loading novel data:', error);
+        console.error('Sidebar loading error:', error);
       } finally {
         setLoading(false);
       }
@@ -67,18 +51,15 @@ const Sidebar = () => {
 
   return (
     <>
-      <button 
-        className="sidebar-toggle" 
+      <button
+        className="sidebar-toggle"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
       >
         {isOpen ? '✕' : '☰'}
       </button>
 
-      <aside 
-        className={`sidebar ${isOpen ? 'open' : 'closed'}`}
-        aria-hidden={!isOpen}
-      >
+      <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`} aria-hidden={!isOpen}>
         <div className="profile">
           <img src={profilePic} alt="Profile" />
           <h2>Helena TL</h2>
@@ -91,30 +72,27 @@ const Sidebar = () => {
                 Home
               </Link>
             </li>
-            
+
             {novels.map((novel) => (
-              <li key={novel.novelId}>
-                <VolumeDropdown 
-                  title={`${novel.title}`}
-                  isInitiallyOpen={true}
-                >
+              <li key={novel.novel_id}>
+                <VolumeDropdown title={novel.title} isInitiallyOpen={true}>
                   <ul className="submenu">
                     {novel.volumes.map((volume) => (
-                      <li key={`${novel.novelId}-vol${volume.number}`}>
-                        <VolumeDropdown 
+                      <li key={`vol-${volume.id}`}>
+                        <VolumeDropdown
                           title={`Volume ${volume.number}: ${volume.title || ''}`}
                         >
                           <ul className="submenu chapter-list">
                             {volume.chapters.map((chapter) => (
-                              <li key={`${novel.novelId}-ch${chapter.number}`}>
+                              <li key={`ch-${chapter.id}`}>
                                 <Link
-                                  to={`/novel/${novel.novelId}/chapter/${chapter.number}`}
+                                  to={`/novel/${novel.novel_id}/chapter/${chapter.number}`}
                                   onClick={() => setIsOpen(false)}
                                   className="nav-link"
                                 >
                                   <div className="chapter-title-full">
                                     <span className="chapter-number">Ch. {chapter.number}:</span>
-                                    <span className="chapter-title-text"> {chapter.chapterTitle}</span>
+                                    <span className="chapter-title-text"> {chapter.title}</span>
                                   </div>
                                 </Link>
                               </li>
@@ -135,3 +113,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

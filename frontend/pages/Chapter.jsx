@@ -15,61 +15,47 @@ const Chapter = () => {
     adjacentChapters: { prev: null, next: null }
   });
 
-  useEffect(() => {
-    const loadChapterData = async () => {
-      try {
-        const novelRes = await import(`../data/json/${novelId}.json`);
-        const novel = novelRes.default;
-        
-        const allChapters = novel.volumes.flatMap(volume => 
-          volume.chapters.map(chapter => ({
-            ...chapter,
-            volumeNumber: volume.number,
-            volumeTitle: volume.title || `Volume ${volume.number}`
-          }))
-        );
+useEffect(() => {
+  const loadChapterData = async () => {
+    try {
+      const novelRes = await fetch(`https://your-backend.com/api/novel.php?id=${novelId}`);
+      if (!novelRes.ok) throw new Error("Failed to fetch novel data");
+      const novel = await novelRes.json();
 
-        const chapter = allChapters.find(ch => ch.number === parseInt(chapterNumber));
-        if (!chapter) throw new Error(`Chapter ${chapterNumber} not found`);
+      const allChapters = novel.volumes.flatMap(volume =>
+        volume.chapters.map(chapter => ({
+          ...chapter,
+          volumeNumber: volume.number,
+          volumeTitle: volume.title || `Volume ${volume.number}`
+        }))
+      );
 
-        let content;
-        if (chapter.contentFile.startsWith('/')) {
-          const contentRes = await fetch(chapter.contentFile);
-          if (!contentRes.ok) throw new Error(`Failed to load: ${chapter.contentFile}`);
-          content = await contentRes.text();
-        } else {
-          try {
-            const markdown = await import(/* @vite-ignore */ `../data/md/${novelId}/${chapter.contentFile}?raw`);
-            content = markdown.default;
-          } catch (e) {
-            throw new Error(`Failed to load chapter content: ${e.message}`);
-          }
-        }
+      const chapter = allChapters.find(ch => ch.number === parseInt(chapterNumber));
+      if (!chapter) throw new Error(`Chapter ${chapterNumber} not found`);
 
-        const currentIndex = allChapters.findIndex(ch => ch.number === parseInt(chapterNumber));
-        const prevChapter = currentIndex > 0 ? allChapters[currentIndex - 1] : null;
-        const nextChapter = currentIndex < allChapters.length - 1 ? allChapters[currentIndex + 1] : null;
+      const chapRes = await fetch(`https://your-backend.com/api/chapter.php?novel=${novelId}&number=${chapterNumber}`);
+      if (!chapRes.ok) throw new Error("Failed to fetch chapter content");
+      const chapData = await chapRes.json();
 
-        setState({
-          novel,
-          chapter,
-          content,
-          loading: false,
-          error: null,
-          adjacentChapters: { prev: prevChapter, next: nextChapter }
-        });
-
-      } catch (error) {
-        console.error('Chapter loading error:', error);
-        setState(prev => ({
-          ...prev,
-          loading: false,
-          error: error.message.includes('Failed to fetch') 
-            ? 'Chapter content not found' 
-            : error.message
-        }));
-      }
-    };
+      setState({
+        novel,
+        chapter,
+        content: chapData.chapter.content,
+        loading: false,
+        error: null,
+        adjacentChapters: chapData.adjacentChapters
+      });
+    } catch (error) {
+      console.error('Chapter loading error:', error);
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message.includes('Failed to fetch')
+          ? 'Chapter content not found'
+          : error.message
+      }));
+    }
+  };
 
     loadChapterData();
   }, [novelId, chapterNumber]);
@@ -135,7 +121,7 @@ const Chapter = () => {
               onClick={() => handleChapterChange(state.adjacentChapters.prev.number)}
               className="nav-button prev"
             >
-              ← {state.adjacentChapters.prev.chapterTitle}
+              ← {state.adjacentChapters.prev.title}
             </button>
           )}
           
@@ -148,7 +134,7 @@ const Chapter = () => {
               onClick={() => handleChapterChange(state.adjacentChapters.next.number)}
               className="nav-button next"
             >
-              {state.adjacentChapters.next.chapterTitle} →
+              {state.adjacentChapters.next.title} →
             </button>
           )}
         </div>

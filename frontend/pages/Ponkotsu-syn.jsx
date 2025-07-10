@@ -26,12 +26,11 @@ function PonkotsuSyn() {
   useEffect(() => {
     const loadNovelData = async () => {
       try {
-        const response = await import('../data/json/meta-ponkotsu.json');
-        if (!response.default?.volumes || !response.default?.novelId) {
-          throw new Error('Invalid novel data structure');
-        }
-        setVolumes(response.default.volumes);
-        setNovelId(response.default.novelId);
+        const response = await fetch(`https://your-backend.com/api/novel.php?id=meta-ponkotsu`);
+        if (!response.ok) throw new Error("Failed to fetch novel data");
+        const data = await response.json();
+        setVolumes(data.volumes);
+        setNovelId(data.novelId);
       } catch (error) {
         console.error('Error loading novel data:', error);
         setError('Failed to load novel data');
