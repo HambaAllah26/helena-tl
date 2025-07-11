@@ -1,43 +1,54 @@
 <?php
-header('Content-Type: application/json');
-include '../db.php';
+require_once '../db.php';
 
-$novelsSql = "SELECT id, novel_id, title FROM novels";
-$novelsResult = $conn->query($novelsSql);
-$novels = [];
-
-while ($novel = $novelsResult->fetch_assoc()) {
-    $novelId = $novel['id'];
-    $novelObj = [
-        'id' => $novelId,
-        'novel_id' => $novel['novel_id'],
-        'title' => $novel['title'],
-        'volumes' => []
-    ];
-
-    $volumesSql = "SELECT id, number, title FROM volumes WHERE novel_id = $novelId ORDER BY number ASC";
-    $volumesResult = $conn->query($volumesSql);
-
-    while ($volume = $volumesResult->fetch_assoc()) {
-        $volumeId = $volume['id'];
-        $volumeObj = [
-            'id' => $volumeId,
-            'number' => $volume['number'],
-            'title' => $volume['title'],
-            'chapters' => []
-        ];
-
-        $chaptersSql = "SELECT id, number, title FROM chapters WHERE volume_id = $volumeId ORDER BY number ASC";
-        $chaptersResult = $conn->query($chaptersSql);
-
-        while ($chapter = $chaptersResult->fetch_assoc()) {
-            $volumeObj['chapters'][] = $chapter;
-        }
-
-        $novelObj['volumes'][] = $volumeObj;
+try {
+    $response = ['novels' => []];
+    
+    $novels = $pdo->query("SELECT id, novel_id, title FROM novels")->fetchAll();
+    
+    $volumesStmt = $pdo->query("SELECT id, novel_id, number, title FROM volumes ORDER BY novel_id, number ASC");
+    $volumesByNovel = [];
+    
+    while ($volume = $volumesStmt->fetch()) {
+        $volumesByNovel[$volume['novel_id']][] = $volume;
     }
-
-    $novels[] = $novelObj;
+    
+    $chaptersStmt = $pdo->query("SELECT id, volume_id, number, title FROM chapters ORDER BY volume_id, number ASC");
+    $chaptersByVolume = [];
+    
+    while ($chapter = $chaptersStmt->fetch()) {
+        $chaptersByVolume[$chapter['volume_id']][] = $chapter;
+    }
+    
+    foreach ($novels as $novel) {
+        $novelId = $novel['id'];
+        $novelData = [
+            'id' => (int)$novel['id'],
+            'novel_id' => $novel['novel_id'],
+            'title' => $novel['title'],
+            'volumes' => []
+        ];
+        
+        if (isset($volumesByNovel[$novelId])) {
+            foreach ($volumesByNovel[$novelId] as $volume) {
+                $volumeId = $volume['id'];
+                $volumeData = [
+                    'id' => (int)$volume['id'],
+                    'number' => (int)$volume['number'],
+                    'title' => $volume['title'],
+                    'chapters' => $chaptersByVolume[$volumeId] ?? []
+                ];
+                
+                $novelData['volumes'][] = $volumeData;
+            }
+        }
+        
+        $response['novels'][] = $novelData;
+    }
+    
+    die(json_encode($response, JSON_UNESCAPED_UNICODE));
+    
+} catch (PDOException $e) {
+    http_response_code(500);
+    die(json_encode(['error' => 'Database error: ' . $e->getMessage()]));
 }
-
-echo json_encode(['novels' => $novels]);

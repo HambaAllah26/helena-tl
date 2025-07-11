@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchNovelData } from '../api/novelApi';
 import './Ponkotsu-syn.css';
 import FooterSyn from '../components/FooterSyn';
 
@@ -18,28 +19,54 @@ function VolumeDropdown({ title, children }) {
 }
 
 function PonkotsuSyn() {
-  const [volumes, setVolumes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [novelId, setNovelId] = useState('');
+  const [state, setState] = useState({
+    loading: true,
+    error: null,
+    novelInfo: {
+      id: '',
+      title: '',
+      author: 'Hazuki Kujou - 九條葉月'
+    },
+    volumes: []
+  });
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadNovelData = async () => {
       try {
-        const response = await fetch(`https://your-backend.com/api/novel.php?id=meta-ponkotsu`);
-        if (!response.ok) throw new Error("Failed to fetch novel data");
-        const data = await response.json();
-        setVolumes(data.volumes);
-        setNovelId(data.novelId);
+        setState(prev => ({ ...prev, loading: true, error: null }));
+        
+        const data = await fetchNovelData('meta-ponkotsu', {
+          signal: controller.signal
+        });
+
+        setState({
+          loading: false,
+          error: null,
+          novelInfo: {
+            ...state.novelInfo,
+            id: data.novelId,
+            title: data.title || 'I Become Oda Nobunaga\'s Wife'
+          },
+          volumes: data.volumes || []
+        });
+
       } catch (error) {
-        console.error('Error loading novel data:', error);
-        setError('Failed to load novel data');
-      } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setState(prev => ({
+            ...prev,
+            loading: false,
+            error: error.message.includes('Network') 
+              ? 'Network error - please check your connection'
+              : error.message
+          }));
+        }
       }
     };
 
     loadNovelData();
+    return () => controller.abort();
   }, []);
 
   const synopsisDetails = [
@@ -64,12 +91,31 @@ function PonkotsuSyn() {
     "Takeda Shingen's shaved head, Maeda Keiji, and so on."
   ];
 
-if (loading) {
-    return <div className="loading">Loading...</div>;
+   if (state.loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading novel information...</p>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div className="error">{error}</div>;
+  if (state.error) {
+    return (
+      <div className="error-container">
+        <h2>Error Loading Novel</h2>
+        <p>{state.error}</p>
+        <button 
+          className="retry-button"
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </button>
+        <Link to="/" className="home-button">
+          Return Home
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -79,52 +125,72 @@ if (loading) {
           <div className="content-text-wrapper">
             <div className="title-group">
               <span className="synopsis-author">
-                Hazuki Kujou - 九條葉月
+                {state.novelInfo.author}
               </span>
               <span className="synopsis-jp-title">
                 信長の嫁、はじめました ～ポンコツ魔女の戦国内政日記～
               </span>
-              <a href="https://kakuyomu.jp/works/16817330650819696457" className="synopsis-title">
-                I Become Oda Nobunaga's Wife: Diary of a Ponkotsu Witch's Domestic Affairs in the Warring States Period
+              <a 
+                href="https://kakuyomu.jp/works/16817330650819696457" 
+                className="synopsis-title"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                {state.novelInfo.title}
               </a>
             </div>
+
             <div className="synopsis-text">
               {synopsisDetails.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p key={`para-${index}`}>{paragraph}</p>
               ))}
+              
               <p><strong>Example:</strong></p>
               <ul>
                 {nameExamples.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={`name-${index}`}>{item}</li>
                 ))}
               </ul>
+              
               <p>Also, if there is a widely known image, I will use that.</p>
+              
               <p><strong>Example:</strong></p>
               <ul>
                 {visualExamples.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={`visual-${index}`}>{item}</li>
                 ))}
               </ul>
+              
               <p>This work is also published in Shōsetsuka ni Narō and AlphaPolis.</p>
             </div>
 
-           {volumes.map((volume) => (
-              <VolumeDropdown 
-                key={`vol-${volume.number}`} 
-                title={`VOLUME ${volume.number}${volume.title ? ` - ${volume.title.toUpperCase()}` : ''}`}
-              >
-                {volume.chapters?.map((chapter) => (
-                  <div key={`ch-${chapter.number}`} className="chapter-link">
-                    <Link 
-                      to={`/novel/${novelId}/chapter/${chapter.number}`}
-                      className="chapter-link-text"
-                    >
-                      Chapter {chapter.number}: {chapter.title || `Chapter ${chapter.number}`}
-                    </Link>
-                  </div>
-                )) || <p>No chapters available</p>}
-              </VolumeDropdown>
-            ))}
+            <div className="volumes-container">
+              {state.volumes.length > 0 ? (
+                state.volumes.map((volume) => (
+                  <VolumeDropdown 
+                    key={`vol-${volume.number}`}
+                    title={`VOLUME ${volume.number}${volume.title ? ` - ${volume.title.toUpperCase()}` : ''}`}
+                  >
+                    {volume.chapters?.length > 0 ? (
+                      volume.chapters.map((chapter) => (
+                        <div key={`ch-${chapter.number}`} className="chapter-link">
+                          <Link 
+                            to={`/novel/${state.novelInfo.id}/chapter/${chapter.number}`}
+                            className="chapter-link-text"
+                          >
+                            Chapter {chapter.number}: {chapter.title || `Chapter ${chapter.number}`}
+                          </Link>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-chapters">No chapters available</p>
+                    )}
+                  </VolumeDropdown>
+                ))
+              ) : (
+                <p className="no-volumes">No volumes available</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
