@@ -6,8 +6,8 @@ A fast translation web app with responsive UI and modular architecture for easy 
 
 ## Features
 
-- Instant translations** with responsive UI
-- Modular architecture** for easy maintenance
+- Instant translations with responsive UI
+- Modular architecture for easy maintenance
 - Support for multiple language pairs
 - lean, intuitive interface
 - Real-time translation updates
